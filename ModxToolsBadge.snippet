@@ -1,0 +1,68 @@
+<?php
+/**
+ * ModxToolsBadge
+ * @author Manuel Barbiero 2019
+ *
+ * DEPENDENCIES: Bootstrap, JQuery and FontAwesome
+ *
+ * DESCRIPTION
+ *
+ * This Snippet adds a tools badge on the webpage if the user is logged in.
+ *
+ * PROPERTIES:
+ *
+ * &cssPath string Default: '[[++manager_url]]templates/bizen/css/modxtools.css'
+ * &inclDependencies bool Default: 0
+ * &tpl string Default: 'ModxToolsBadge'
+ *
+ * USAGE:
+ *
+ * [[!ModxToolsBadge? &cssPath=`path/to/file.css` &tpl=`ModxToolsBadge`]]
+ *
+ */
+$cssPath 		  = (string) $modx->getOption('cssPath', $scriptProperties, MODX_MANAGER_URL.'templates/css/modxtools.css');
+$inclDependencies = (bool) $modx->getOption('inclDependencies', $scriptProperties, 0);
+$tpl 			  = (string) $modx->getOption('tpl', $scriptProperties, 'ModxToolsBadge');
+
+// Check if user is logged in into the manager
+$isLoggedIn = $modx->user->hasSessionContext('mgr');
+if (!$isLoggedIn) return '';
+
+// Setting data in variables
+$username = $modx->user->get('username'); // the username
+$userProfile  = $modx->user->getOne('Profile'); // the profile object
+$fullName = $userProfile->get('fullname'); // the user fullname
+$managerURL = MODX_MANAGER_URL; // the manager url
+$resourceID = $modx->resource->get('id'); // the resource ID
+// Check if parent is a Collection and if it is a container
+if ($modx->resource->get('class_key') == 'CollectionContainer' || $modx->resource->get('isfolder') == 1) {
+    $parentID = $resourceID; //the parent ID if container
+} else {
+    $parentID = $modx->resource->get('parent'); //the parent ID if child
+}
+
+// Register dependencies by CDN if enabled
+if($inclDependencies) {
+	// Register Bootstrap CSS
+	$modx->regClientCSS('//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+	// Register FontAwesome CSS
+	$modx->regClientCSS('//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css');
+	// Register JQuery
+	$modx->regClientScript('//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js');
+	// Register Bootstrap Js
+	$modx->regClientScript('//stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js');
+}
+
+// Register the custom css file to the <HEAD>
+$modx->regClientCSS($cssPath);
+
+// return ModxToolsBadge tpl chunk with placeholders
+return $modx->getChunk($tpl, array(
+    'manager_url' => $managerURL,
+    'update_url' => $managerURL . '?a=resource/update&id=' . $resourceID,
+    'create_url' => $managerURL . '?a=resource/create&parent=' . $parentID . '&context_key=' . $modx->context->key,
+    'profile_url' => $managerURL . '?a=security/profile',
+    'logout_url' => $managerURL . '?a=security/logout',
+    'username' => $username,
+    'fullname' => $fullName
+));
