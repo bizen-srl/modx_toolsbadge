@@ -1,0 +1,14 @@
+<div id="modx-tools">
+  <button class="modx-tools-toggler" type="button" data-toggle="collapse" data-target="#modx-tools-dropdown" aria-expanded="false" aria-controls="modx-tools-dropdown">
+    <i class="fab fa-modx"></i>
+  </button>
+  <div id="modx-tools-dropdown" class="collapse">
+    <span class="username">Benvenuto [[+fullname]]</span>
+    <ul>
+      <li><a href="[[+manager_url]]">Vai al Manager</a></li>
+      <li><a href="[[+update_url]]">Modifica pagina</a></li>
+	  <li><a href="[[+create_url]]">Nuova pagina</a></li>
+      <li><a href="[[+logout_url]]">Logout</a></li>
+    </ul>
+  </div>
+</div>
